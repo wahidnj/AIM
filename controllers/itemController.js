@@ -390,14 +390,6 @@ exports.callDetails = async (req, res) => {
       }
     });
     
-    // if (calls && calls.transcribe) {
-    //   const transcribe = JSON.stringify(calls.transcribe);
-    //   // const transcribe = calls.transcribe;
-    //   const newlineCount = (transcribe.match(/\\n/g) || []).length; // Count the number of \n characters
-    //   console.log('Number of \\n characters:', newlineCount); // Log the count
-    //   calls.transcribe = transcribe.replace(/\\n/g, '<br>');
-    // }
-    // console.log(calls.transcribe);
     res.render('call-details',{calls});
   } catch (err) {
     console.log(err.message);
@@ -486,7 +478,8 @@ exports.getAgentList = async (req, res) => {
 
 // Create a new item
 exports.createAssistant = async (req, res) => {
-
+  console.log(req.user.name, new Date());
+  const customerId = req.user.id;
   try {
     const agentName = req.body.agentName;
     const voice = req.body.voice;
@@ -516,7 +509,7 @@ exports.createAssistant = async (req, res) => {
     if(response.data){
 
         await Assistant.create({
-          customer_id: 1, 
+          customer_id: customerId, 
           assistant_id: response.data.id,
           name: agentName,
           voice: response.data.voice.voiceId,
@@ -536,7 +529,8 @@ exports.createAssistant = async (req, res) => {
 
 // Create a new item
 exports.updateAssistant = async (req, res) => {
-  
+  console.log(req.user.name, new Date());
+  const customerId = req.user.id;
   try {
     const { id, name, voice, assignment, provider } = req.body;
 
@@ -544,7 +538,7 @@ exports.updateAssistant = async (req, res) => {
     const assistant = await Assistant.findOne({
       where: {
           id: id,
-          customer_id: 1
+          customer_id: customerId
       }
     });
     if (!assistant) {
@@ -553,7 +547,7 @@ exports.updateAssistant = async (req, res) => {
     const assignments = await Assignment.findOne({
       where: {
           id: assignment,
-          customer_id: 1
+          customer_id: customerId
       }
     });
     
@@ -607,14 +601,15 @@ exports.getAssignmentList = async (req, res) => {
 
 // Create a new item
 exports.createAssignment = async (req, res) => {
-  
+  console.log(req.user.name, new Date());
+  const customerId = req.user.id;
   try {
     const name = req.body.name;
     const message = req.body.message;
     const prompt = req.body.prompt;
 
     await Assignment.create({
-      customer_id: 1, 
+      customer_id: customerId, 
       name: name,
       first_message: message,
       prompt: prompt
@@ -633,7 +628,8 @@ exports.createAssignment = async (req, res) => {
 
 // Create a new item
 exports.updateAssignment = async (req, res) => {
-  
+  console.log(req.user.name, new Date());
+  const customerId = req.user.id;
   try {
     const { id, name, message, prompt } = req.body;
 
@@ -641,7 +637,7 @@ exports.updateAssignment = async (req, res) => {
     const assignment = await Assignment.findOne({
       where: {
           id: id,
-          customer_id: 1
+          customer_id: customerId
       }
     });
     if (!assignment) {
@@ -666,7 +662,8 @@ exports.updateAssignment = async (req, res) => {
 
 // Create a new item
 exports.assignAssignment = async (req, res) => {
-  
+  console.log(req.user.name, new Date());
+  const customerId = req.user.id;
   try {
     const { id, assignment_id } = req.body;
 
@@ -674,7 +671,7 @@ exports.assignAssignment = async (req, res) => {
     const assistant = await Assistant.findOne({
       where: {
           id: id,
-          customer_id: 1
+          customer_id: customerId
       }
     });
     if (!assistant) {
@@ -697,7 +694,8 @@ exports.assignAssignment = async (req, res) => {
 
 // Create a new item
 exports.updateAssistantStatus= async (req, res) => {
-  
+  console.log(req.user.name, new Date());
+  const customerId = req.user.id;
   try {
     const { assistantId, status} = req.body;
 
@@ -707,7 +705,7 @@ exports.updateAssistantStatus= async (req, res) => {
       const assistant = await Assistant.findOne({
         where: {
           id: assistantId,
-          customer_id: 1
+          customer_id: customerId
         },
         transaction: t
       });
@@ -751,6 +749,8 @@ exports.updateAssistantStatus= async (req, res) => {
 // Get all agent
 exports.agentDetails = async (req, res) => {
   try {
+    console.log(req.user.name, new Date());
+    const customerId = req.user.id;
     const assistantId = req.params.id;
   
     try {
@@ -772,7 +772,7 @@ exports.agentDetails = async (req, res) => {
 
       const assignments = await Assignment.findAll({
           where: {
-              customer_id: 1
+              customer_id: customerId
           },
           attributes: ['name', 'id']
       });
@@ -789,7 +789,8 @@ exports.agentDetails = async (req, res) => {
 
 // Create a new item
 exports.deleteAssistant = async (req, res) => {
-  
+  console.log(req.user.name, new Date());
+  const customerId = req.user.id;
   try {
     const { id} = req.body;
 
@@ -834,7 +835,8 @@ exports.deleteAssistant = async (req, res) => {
 
 // Create a new item
 exports.deleteAssignment = async (req, res) => {
-  
+  console.log(req.user.name, new Date());
+  const customerId = req.user.id;
   try {
     const { id} = req.body;
 
@@ -869,7 +871,8 @@ exports.deleteAssignment = async (req, res) => {
 
 // Create a new item
 exports.updateSetting = async (req, res) => {
-  
+  console.log(req.user.name, new Date());
+  const customerId = req.user.id;
   try {
     const { id, recording, backgroundSound } = req.body;
 
@@ -877,7 +880,7 @@ exports.updateSetting = async (req, res) => {
     const assistant = await Assistant.findOne({
       where: {
           id: id,
-          customer_id: 1
+          customer_id: customerId
       }
     });
     if (!assistant) {
