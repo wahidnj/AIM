@@ -1,0 +1,241 @@
+<!doctype html>
+<html lang="en" data-layout="twocolumn" data-sidebar="light" data-sidebar-size="lg" data-sidebar-image="none" data-preloader="disable">
+
+<head>
+    <%- include('layout/head-back',{
+        title: 'AGENT DETAILS'}) %>
+</head>
+
+<body>
+
+    <!-- Begin page -->
+    <div id="layout-wrapper">
+
+        <%- include('layout/header-back') %>
+        <!-- Vertical Overlay-->
+        <div class="vertical-overlay"></div>
+
+        <!-- ============================================================== -->
+        <!-- Start right Content here -->
+        <!-- ============================================================== -->
+        <div class="main-content">
+
+            <div class="page-content">
+                <div class="container-fluid">
+                    
+                    <div class="row">
+
+                        <div class="col-lg-12">
+                            <div class="card">
+                                <div class="card-header align-items-center d-flex">
+                                    <h4 class="card-title mb-0 flex-grow-1">Agent Details</h4>
+                                    <div class="flex-shrink-0">
+                                        <button href="#" class="btn btn-danger btn-sm delete-button" data-id="<%= assistant.id %>" <%= assistant.status === 1 ? 'disabled' : '' %> ><i class="ri-download-2-fill align-middle me-1"></i> Delete </a>
+                                    </div>
+                                </div><!-- end card header -->
+                                <div class="card-body">
+                                    
+                                    <div class="live-preview">
+                                        <form id="updateForm">
+                                            
+                                            <div class="row g-3">
+                                                <input type="hidden" class="form-control" id="id" value="<%= assistant.id %>">
+                                                <div class="col-lg-6">
+                                                    <div class="form-floating">
+                                                        <input type="text" class="form-control" id="name" value="<%= assistant.name %>" placeholder="Enter your firstname">
+                                                        <label for="name">Agent Name</label>
+                                                    </div>
+                                                </div>
+                                                <div class="col-lg-4">
+                                                    <div class="form-floating">
+                                                        <select class="form-select" id="provider" aria-label="Floating label select example" required readonly>
+                                                            <option selected value="">Choose...</option>
+                                                            <option value="playht"<% if (assistant.provider === "playht") { %> selected <% } %> disabled>PlayHt</option>
+                                                            <option value="deepgram" <% if (assistant.provider === "deepgram") { %> selected <% } %>>Deepgram</option>
+                                                            <option value="openai" <% if (assistant.provider === "openai") { %> selected <% } %> disabled>Open AI</option>
+                                                        </select>
+                                                        <label for="provider">Voice Provider</label>
+                                                    </div>
+                                                </div>
+
+                                                <div class="col-lg-4">
+                                                    <div class="form-floating">
+                                                        <select class="form-select" id="voice" aria-label="Floating label select example" required>
+                                                            <option value="">Choose...</option>
+                                                            <% if (rate && rate.length > 0) { %>
+                                                                <% rate.forEach(rates => { %>
+                                                                   <option value="<%= rates.voice %>" <% if (assistant.voice === rates.voice) { %> selected <% } %>><%= rates.voice %></option>
+                                                                <% }); %>
+                                                            <% } %>   
+                                                        </select>
+                                                        <label for="voice">Agent Voice</label>
+                                                    </div>
+                                                </div>
+
+                                                <div class="col-lg-4">
+                                                    <div class="form-floating">
+                                                        <select class="form-select" id="assignment" aria-label="Floating label select example" required>
+                                                            <option selected value="">Choose...</option>
+                                                            <% if (assignments && assignments.length > 0) { %>
+                                                                <% assignments.forEach(assignment => { %>
+                                                                   <!-- <option value="<%= assignment.id %>"><%= assignment.name %></option> -->
+                                                                   <option value="<%= assignment.id %>" <% if (assistant.assignment === assignment.id) { %> selected <% } %>><%= assignment.name %></option>
+                                                                <% }); %>
+                                                            <% } %>   
+                                                        </select>
+                                                        <label for="assignment">Assigned Assignment</label>
+                                                    </div>
+                                                </div>
+
+                                                <!-- <div class="mt-3 pt-2" id="amountDiv">
+                                                    <div class="d-flex mb-2">
+                                                        <div class="flex-grow-1">
+                                                            <h5 class="mb-0">Amount<span class="text-muted ms-1 fs-13">(per minute)</span></h5>
+                                                        </div>
+                                                        <div class="flex-shrink-0">
+                                                            <h6 class="mb-0" id="amount"><%= rate[0].amount %></h6>
+                                                        </div>
+                                                    </div>
+                                                </div> -->
+
+                                                <div class="col-lg-12">
+                                                    <div class="text-end">
+                                                        <button type="submit" class="btn btn-success">Update</button>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </form>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <!-- container-fluid -->
+            </div>
+            <!-- End Page-content -->
+
+            <%- include('layout/footer') %>
+        </div>
+        <!-- end main content-->
+
+    </div>
+    <!-- END layout-wrapper -->
+
+    <!-- JAVASCRIPT -->
+
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js" integrity="sha256-/xUj+3OJU5yExlq6GSYGSHk7tPXikynS7ogEvDej/m4=" crossorigin="anonymous"></script>
+    <script>
+        $(document).ready(function() {
+            var token = "<%= user.token %>";
+            $('#updateForm').on('submit', function(event) {
+                event.preventDefault(); // Prevent the form from submitting the traditional way
+
+                // Get form data
+                var id = $('#id').val();
+                var name = $('#name').val();
+                var voice = $('#voice').val();
+                var provider = $('#provider').val();
+                var assignment = $('#assignment').val();
+
+                if(id && name && voice && assignment){
+                   // Send data to the server using AJAX
+                    $.ajax({
+                        url: '/update-agent', // Replace with your actual controller route
+                        method: 'POST',
+                        headers: {
+                            'Authorization': 'Bearer ' + token
+                        },
+                        data: {
+                            name: name,
+                            voice: voice,
+                            assignment: assignment,
+                            provider: provider,
+                            id: id
+                        },
+                        success: function(response) {
+                            // Handle success (e.g., show a success message, close modal, etc.)
+                            alert('Form submitted successfully!');
+                        },
+                        error: function(error) {
+                            // Handle error (e.g., show an error message)
+                            alert('An error occurred. Please try again.');
+                        }
+                    });
+                }
+
+            });
+
+            $('.delete-button').on('click', function(event) {
+                event.preventDefault();
+                const id = $(this).data('id');
+                console.log(id);
+                $.ajax({
+                    url: '/delete-assistant', // Replace with your actual controller route
+                    method: 'POST',
+                    headers: {
+                        'Authorization': 'Bearer ' + token
+                    },
+                    data: {
+                        id: id
+                    },
+                    success: function(response) {
+                        // Handle success (e.g., show a success message, close modal, etc.)
+                        window.location.href = '/agent';
+                    },
+                    error: function(error) {
+                        // Handle error (e.g., show an error message)
+                        alert('An error occurred. Please try again.');
+                    }
+                });
+            });
+
+            $('#provider').change(function() {
+                var provider = $(this).val();
+                
+                // Clear the voice dropdown
+                $('#voice').empty();
+                
+                if (provider) {
+                    console.log(provider);
+                    // Mock AJAX request URL (replace with your actual URL)
+                    
+                    $.ajax({
+                        url: '/rates',
+                        method: 'POST',
+                        headers: {
+                            'Authorization': 'Bearer ' + token
+                        },
+                        data: {
+                            provider: provider
+                        },
+                        success: function(data) {
+                            // Assuming data is an array of voice objects like: [{id: 'voice1', name: 'Voice 1'}, {id: 'voice2', name: 'Voice 2'}]
+                            console.log(data.array);
+                            $('#amountDiv').show();
+                            $('#amount').text('$' + data.array[0].amount.toFixed(2));
+                            // // Append a default option
+                            $('#voice').append('<option value="">Select Voice</option>');
+                            
+                            // // // Append fetched voices to the voice dropdown
+                            data.array.forEach(function(voice) {
+                              $('#voice').append('<option value="' + voice.voice + '">' + voice.voice + '</option>');
+                            });
+
+                        },
+                        error: function() {
+                            $('#amountDiv').hide();
+                            alert('Error fetching voices for the selected provider.');
+                        }
+                    });
+                } else {
+                    // Append a default option if no provider is selected
+                    $('#voice').append('<option value="">Select Voice</option>');
+                }
+            });
+        });
+    </script>
+
+</body>
+
+</html>

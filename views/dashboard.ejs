@@ -1,0 +1,273 @@
+<% 
+    function formatDateTime(dateTimeString) {
+        const dateTime = new Date(dateTimeString);
+        const date = dateTime.toLocaleDateString('en-GB', { day: '2-digit', month: '2-digit', year: 'numeric' });
+        const time = dateTime.toLocaleTimeString('en-GB', { hour: '2-digit', minute: '2-digit', second: '2-digit' });
+        return `${date} ${time}`;
+    } 
+
+    function callDuration(started_at, ended_at) {
+        const startedAt = new Date(started_at);
+        const endedAt = new Date(ended_at);
+        const durationInSeconds = (endedAt - startedAt) / 1000; // Convert milliseconds to seconds
+        return formatDuration(durationInSeconds);
+    } 
+
+    // Function to format duration from seconds to hh:mm:ss
+    function formatDuration(durationInSeconds) {
+        const hours = Math.floor(durationInSeconds / 3600);
+        const minutes = Math.floor((durationInSeconds % 3600) / 60);
+        const seconds = Math.floor(durationInSeconds % 60);
+        return `${padZero(hours)}:${padZero(minutes)}:${padZero(seconds)}`;
+    }
+  
+    // Function to pad zero for single digit numbers
+    function padZero(num) {
+        return num.toString().padStart(2, '0');
+    }
+%>
+<!doctype html>
+<html lang="en" data-layout="twocolumn" data-sidebar="light" data-sidebar-size="lg" data-sidebar-image="none" data-preloader="disable">
+
+<head>
+    <%- include('layout/head',{
+        title: 'DASHBOARD'}) %>
+</head>
+
+<body>
+
+    <!-- Begin page -->
+    <div id="layout-wrapper">
+
+        <%- include('layout/header') %>
+        <!-- Vertical Overlay-->
+        <div class="vertical-overlay"></div>
+
+        <!-- ============================================================== -->
+        <!-- Start right Content here -->
+        <!-- ============================================================== -->
+        <div class="main-content">
+
+            <div class="page-content">
+                <div class="container-fluid">
+                    <!-- start page title -->
+                    <div class="row">
+                        <div class="col-12">
+                            <div class="page-title-box d-sm-flex align-items-center justify-content-between">
+                                <h4 class="mb-sm-0">Dashboard</h4>
+                            </div>
+                        </div>
+                    </div>
+                    <!-- end page title -->
+
+                    <div class="row">
+                        <div class="col-xxl-6">
+                            <div class="d-flex flex-column h-100">
+
+                                <div class="row">
+                                    <div class="col-md-6">
+                                        <div class="card card-animate">
+                                            <div class="card-body">
+                                                <div class="d-flex justify-content-between">
+                                                    <div>
+                                                        <p class="fw-semibold text-muted mb-0">Total Agent</p>
+                                                        <h2 class="mt-4 ff-secondary fw-semibold"> <%= totalAssistants %> </h2>
+                                                        <a href="/agent" class="text-decoration-underline text-success-50">View all Agents</a>
+                                                        
+                                                    </div>
+                                                    <div>
+                                                        <div class="avatar-sm flex-shrink-0">
+                                                            <span class="avatar-title bg-soft-info rounded-circle fs-2">
+                                                                <i class="bx bx-shopping-bag text-white"></i>
+                                                            </span>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div><!-- end card body -->
+                                        </div> <!-- end card-->
+                                    </div> <!-- end col-->
+
+                                    <div class="col-md-6">
+                                        <div class="card card-animate">
+                                            <div class="card-body">
+                                                <div class="d-flex justify-content-between">
+                                                    <div>
+                                                        <p class="fw-semibold text-muted mb-0">Total Assignment</p>
+                                                        <h2 class="mt-4 ff-secondary fw-semibold"><%= totalAssignments %></h2>
+                                                        <a href="/assignment" class="text-decoration-underline text-success-50">View all Assignment</a>
+                                                    </div>
+                                                    <div>
+                                                        <div class="avatar-sm flex-shrink-0">
+                                                            <span class="avatar-title bg-soft-info rounded-circle fs-2">
+                                                                <i class="bx bx-shopping-bag text-white"></i>
+                                                            </span>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div><!-- end card body -->
+                                        </div> <!-- end card-->
+                                    </div> <!-- end col-->
+                                </div> <!-- end row-->
+
+                                <div class="row">
+                                    <div class="col-md-6">
+                                        <div class="card card-animate">
+                                            <div class="card-body">
+                                                <div class="d-flex justify-content-between">
+                                                    <div>
+                                                        <p class="fw-semibold text-muted mb-0">Live Agent</p>
+                                                        <h2 class="mt-4 ff-secondary fw-semibold"><%= liveAssistant.name %></h2>
+                                                        <p class="mb-0 text-muted"><span class="badge bg-light text-success mb-0"> AAAAA  </span> Live Assignment</p>
+                                                    </div>
+                                                    <div>
+                                                        <div class="avatar-sm flex-shrink-0">
+                                                            <span class="avatar-title bg-soft-info rounded-circle fs-2">
+                                                                <i class="bx bx-shopping-bag text-white"></i>
+                                                            </span>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div><!-- end card body -->
+                                        </div> <!-- end card-->
+                                    </div> <!-- end col-->
+
+                                    <div class="col-md-6">
+                                        <div class="card card-animate">
+                                            <div class="card-body">
+                                                <div class="d-flex justify-content-between">
+                                                    <div>
+                                                        <p class="fw-semibold text-muted mb-0">Minute Left</p>
+                                                        <h2 class="mt-4 ff-secondary fw-semibold">20 <span class="badge bg-light text-success mb-0 fs-10"> 0.13 per minute</span></h2>
+                                                        <!-- <a href="" class="text-decoration-underline text-success-50" data-bs-toggle="modal" data-bs-target="#balanceModal">Add Balance</a> -->
+                                                    </div>
+                                                    <div>
+                                                        <div class="avatar-sm flex-shrink-0">
+                                                            <span class="avatar-title bg-soft-info rounded-circle fs-2">
+                                                                <i class="bx bx-shopping-bag text-white"></i>
+                                                            </span>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div><!-- end card body -->
+                                        </div> <!-- end card-->
+                                    </div> <!-- end col-->
+                                </div> <!-- end row-->
+                                
+                                <div class="row">
+                                    <div class="col-xl-12">
+                                        <div class="card">
+                                            <div class="card-header align-items-center d-flex">
+                                                <h4 class="card-title mb-0 flex-grow-1">Call Logs</h4>
+                                            </div><!-- end card header -->
+    
+                                            <div class="card-body">
+                                                <div class="table-responsive table-card">
+                                                    <table class="table table-borderless table-centered align-middle table-nowrap mb-0">
+                                                        <thead class="text-muted table-light">
+                                                            <tr>
+                                                                <th scope="col">Number</th>
+                                                                <th scope="col">Duration</th>
+                                                                <th scope="col">Amount</th>
+                                                                <th scope="col">Started At</th>
+                                                            </tr>
+                                                        </thead>
+                                                        <tbody>
+                                                            <% if (callLogs && callLogs.length > 0) { %>
+                                                                <% callLogs.forEach(callLog => { %>
+                                                                <tr>
+                                                                    <td>
+                                                                        <a href="/call-details/<%= callLog.id %>" class="fw-medium link-primary"><%= callLog.phone %></a>
+                                                                    </td>
+                                                                    <td>
+                                                                        <%= callDuration(callLog.started_at, callLog.ended_at) %>
+                                                                    </td>
+                                                                    <td>
+                                                                        <span class="text-success"><%= callLog.total_cost %></span>
+                                                                    </td>
+                                                                    <td>
+                                                                        <span class="badge badge-soft-success"><%= formatDateTime(callLog.started_at) %></span>
+                                                                    </td>
+                                                                </tr><!-- end tr -->
+                                                            <% }); %>
+                                                            <% } %>    
+                                                        </tbody><!-- end tbody -->
+                                                    </table><!-- end table -->
+                                                </div>
+                                            </div>
+                                        </div> <!-- .card-->
+                                    </div> <!-- .col-->
+                                </div>
+
+                            </div>
+                        </div> <!-- end col-->
+
+                    </div> <!-- end row-->
+                </div>
+                <!-- container-fluid -->
+            </div>
+            <!-- End Page-content -->
+
+            <%- include('layout/footer') %>
+        </div>
+        <!-- end main content-->
+
+    </div>
+    <!-- END layout-wrapper -->
+
+    <!-- Modal Blur -->
+    <div id="balanceModal" class="modal fade zoomIn" tabindex="-1" aria-labelledby="zoomInModalLabel" aria-hidden="true" style="display: none;">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title fw-bold" id="zoomInModalLabel">Balance Modal</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <form id="agentForm">
+                        <div class="row g-3">
+                            <div class="col-xxl-6">
+                                <div>
+                                    <label for="balance" class="form-label">Add Balance</label>
+                                    <input type="text" class="form-control" id="balance" placeholder="Enter Balance">
+                                </div>
+                            </div>
+                            <!--end col-->
+
+                            <div class="col-lg-12">
+                                <div class="hstack gap-2 justify-content-end">
+                                    <button type="button" class="btn btn-light" data-bs-dismiss="modal">Close</button>
+                                    <button type="submit" class="btn btn-primary">Submit</button>
+                                </div>
+                            </div>
+                            <!--end col-->
+                        </div>
+                        <!--end row-->
+                    </form>
+                </div>
+            </div><!-- /.modal-content -->
+        </div><!-- /.modal-dialog -->
+    </div><!-- /.modal -->
+
+    <!-- JAVASCRIPT -->
+    <%- include('layout/script') %>
+    <script type="text/javascript">
+            var Tawk_API=Tawk_API||{}, Tawk_LoadStart=new Date();
+            (function(){
+                var s1=document.createElement("script"),s0=document.getElementsByTagName("script")[0];
+                s1.async=true;
+                s1.src='https://embed.tawk.to/6653421e981b6c564774d593/1huqjki1a';
+                s1.charset='UTF-8';
+                s1.setAttribute('crossorigin','*');
+                s0.parentNode.insertBefore(s1,s0);
+            })();
+    </script>
+    <script>
+
+        $(document).ready(function() {
+
+        });
+    </script>
+
+</body>
+
+</html>

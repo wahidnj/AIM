@@ -1,0 +1,204 @@
+<% 
+    function formatDateTime(dateTimeString) {
+        const dateTime = new Date(dateTimeString);
+        const date = dateTime.toLocaleDateString('en-GB', { day: '2-digit', month: '2-digit', year: 'numeric' });
+        const time = dateTime.toLocaleTimeString('en-GB', { hour: '2-digit', minute: '2-digit', second: '2-digit' });
+        return `${date} ${time}`;
+    } 
+
+    function callDuration(started_at, ended_at) {
+        const startedAt = new Date(started_at);
+        const endedAt = new Date(ended_at);
+        const durationInSeconds = (endedAt - startedAt) / 1000; // Convert milliseconds to seconds
+        return formatDuration(durationInSeconds);
+    } 
+
+    // Function to format duration from seconds to hh:mm:ss
+    function formatDuration(durationInSeconds) {
+        const hours = Math.floor(durationInSeconds / 3600);
+        const minutes = Math.floor((durationInSeconds % 3600) / 60);
+        const seconds = Math.floor(durationInSeconds % 60);
+        return `${padZero(hours)}:${padZero(minutes)}:${padZero(seconds)}`;
+    }
+  
+    // Function to pad zero for single digit numbers
+    function padZero(num) {
+        return num.toString().padStart(2, '0');
+    }
+%>
+<!doctype html>
+<html lang="en" data-layout="twocolumn" data-sidebar="light" data-sidebar-size="lg" data-sidebar-image="none" data-preloader="disable">
+
+<head>
+    <%- include('layout/head-back',{
+        title: 'CALL DETAILS'}) %>
+        <style>
+
+            canvas {
+                width: 100%;
+                height: 100px;
+                background: #f4f4f9;
+                margin-top: 20px;
+            }
+        </style>
+</head>
+
+<body>
+
+    <!-- Begin page -->
+    <div id="layout-wrapper">
+
+        <%- include('layout/header-back') %>
+        <!-- Vertical Overlay-->
+        <div class="vertical-overlay"></div>
+
+        <!-- ============================================================== -->
+        <!-- Start right Content here -->
+        <!-- ============================================================== -->
+        <div class="main-content">
+
+            <div class="page-content">
+                <div class="container-fluid">
+                    <!-- start page title -->
+                    <div class="row">
+                        <div class="col-12">
+                            <div class="page-title-box d-sm-flex align-items-center justify-content-between">
+                                <h4 class="mb-sm-0">Call Log Details</h4>
+                            </div>
+                        </div>
+                    </div>
+                    <!-- end page title -->
+
+                    <div class="row">
+                        <div class="col-xxl-9 order-xxl-0 order-first">
+                            <div class="d-flex flex-column h-100">
+                                <div class="row h-100">
+                                    <div class="col-lg-4 col-md-6">
+                                        <div class="card">
+                                            <div class="card-body">
+                                                <div class="mb-3">
+                                                    <h4>Recording</h4>
+                                                </div>
+
+                                                <div class="d-flex align-items-center">
+                                                    <div class="avatar-sm flex-shrink-0">
+                                                        <span class="avatar-title bg-light text-primary rounded-circle fs-3">
+                                                            <i class="ri-folder-music-fill align-middle"></i>
+                                                        </span>
+                                                    </div>
+                                                    <div class="flex-grow-1 ms-3">
+                                                        <audio id="audio" controls>
+                                                            <source src="<%=calls.recording_url%>" type="audio/wav">
+                                                            Your browser does not support the audio element.
+                                                        </audio>
+                                                    </div>
+                                                </div>
+                                                <!-- <canvas id="canvas"></canvas> -->
+                                            </div><!-- end card body -->
+                                        </div><!-- end card -->
+                                    </div><!-- end col -->
+                                </div><!-- end row -->
+                            </div>
+                        </div><!-- end col -->
+
+                        <div class="col-xl-12">
+                            <div class="card">
+                                <div class="card-header">
+                                    <h4 class="card-title mb-0">Call Details</h4>
+                                </div><!-- end card header -->
+                                <div class="card-body form-steps">
+                                    <div class="row gy-5">
+
+                                            <div class="col-lg-3">
+                                                <ul class="list-group mb-3">
+                                                    <li class="list-group-item d-flex justify-content-between lh-sm">
+                                                        <div>
+                                                            <h6 class="my-0">Total Duration</h6>
+                                                        </div>
+                                                        <span class="text-muted"> <%= callDuration(calls.started_at, calls.ended_at) %></span>
+                                                    </li>
+                                                    <li class="list-group-item d-flex justify-content-between lh-sm">
+                                                        <div>
+                                                            <h6 class="my-0">Started At</h6>
+                                                        </div>
+                                                        <span class="text-muted"><%= formatDateTime(calls.started_at) %></span>
+                                                    </li>
+                                                    <li class="list-group-item d-flex justify-content-between lh-sm">
+                                                        <div>
+                                                            <h6 class="my-0">Ended At</h6>
+                                                        </div>
+                                                        <span class="text-muted"><%= formatDateTime(calls.ended_at) %></span>
+                                                    </li>
+                                                    <li class="list-group-item d-flex justify-content-between lh-sm">
+                                                        <div class="text-success">
+                                                            <h6 class="my-0">Phone</h6>
+                                                        </div>
+                                                        <span class="text-success"><%=calls.phone%></span>
+                                                    </li>
+                                                    <li class="list-group-item d-flex justify-content-between">
+                                                        <span>Total Cost</span>
+                                                        <span class="fw-bold">$<%=calls.total_cost%></span>
+                                                    </li>
+                                                </ul>
+                                            </div>
+                                    </div>
+                                    <!-- end row -->
+                                </div>
+                            </div>
+                            <!-- end -->
+                        </div>
+
+                        <div class="col-xl-12">
+                            <div class="card">
+                                <div class="card-body">
+                                    <div class="text-muted">
+                                        <h6 class="mb-3 fw-bold text-uppercase">Summary</h6>
+                                        <p><%=calls.summary %></p>
+                                    </div>
+                                </div>
+                                <!-- end card body -->
+                            </div>
+                            <!-- end card -->
+                        </div>
+                        <!-- ene col -->
+
+                        <div class="col-xl-12">
+                            <div class="card">
+                                <div class="card-body">
+                                    <div class="text-muted">
+                                        <h6 class="mb-3 fw-bold text-uppercase">Transcribe</h6>
+                                        <!-- <% var transcribe = calls.transcribe; %> -->
+                                        <!-- <% transcribe = transcribe.replace(/\n/g, '/\r/\n'); %> -->
+                                        <p><%= calls.transcribe %></p>
+                                    </div>
+                                </div>
+                                <!-- end card body -->
+                            </div>
+                            <!-- end card -->
+                        </div>
+                        <!-- ene col -->
+                    </div>
+
+                </div>
+                <!-- container-fluid -->
+            </div>
+            <!-- End Page-content -->
+
+            <%- include('layout/footer') %>
+        </div>
+        <!-- end main content-->
+
+    </div>
+    <!-- END layout-wrapper -->
+
+    <!-- JAVASCRIPT -->
+
+    <script>
+        $(document).ready(function() {
+
+        });
+    </script>
+
+</body>
+
+</html>

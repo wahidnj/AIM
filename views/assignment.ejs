@@ -1,0 +1,405 @@
+<!doctype html>
+<html lang="en" data-layout="twocolumn" data-sidebar="light" data-sidebar-size="lg" data-sidebar-image="none" data-preloader="disable">
+
+<head>
+    <%- include('layout/head',{
+        title: 'ASSIGNMENT LIST'}) %>
+
+        <style>
+            .full-message {
+                display: none;
+                position: absolute;
+                background-color: white;
+                border: 1px solid #ccc;
+                padding: 10px;
+                z-index: 1000;
+                /* max-width: 200px; */
+                box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            }
+
+            .full-message ul {
+                list-style-type: none;
+                margin: 0;
+                padding: 0;
+            }
+            .full-message ul li {
+                margin-bottom: 5px;
+            }
+        </style>
+</head>
+
+<body>
+
+    <!-- Begin page -->
+    <div id="layout-wrapper">
+
+        <%- include('layout/header') %>
+        <!-- Vertical Overlay-->
+        <div class="vertical-overlay"></div>
+
+        <!-- ============================================================== -->
+        <!-- Start right Content here -->
+        <!-- ============================================================== -->
+        <div class="main-content">
+
+            <div class="page-content">
+                <div class="container-fluid">
+
+                    <!-- start page title -->
+                    <div class="row">
+                        <div class="col-12">
+                            <div class="page-title-box d-sm-flex align-items-center justify-content-between">
+                                <h4 class="mb-sm-0">Datatables</h4>
+
+                                <div class="page-title-right">
+                                    <ol class="breadcrumb m-0">
+                                        <li class="breadcrumb-item"><a href="javascript: void(0);">Tables</a></li>
+                                        <li class="breadcrumb-item active">Datatables</li>
+                                    </ol>
+                                </div>
+
+                            </div>
+                        </div>
+                    </div>
+                    <!-- end page title -->
+
+                    <div class="row">
+                        <div class="col-lg-12">
+                            <div class="card">
+                                <div class="card-header">
+                                    <div class="d-flex align-items-center">
+                                        <h5 class="card-title flex-grow-1 mb-0">Assignment List</h5>
+                                        <div class="flex-shrink-0">
+                                            <a href="#" class="btn btn-success btn-sm" data-bs-toggle="modal" data-bs-target="#addModal"><i class="ri-download-2-fill align-middle me-1"></i> New </a>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="card-body">
+                                    <table id="scroll-horizontal" class="table nowrap align-middle" style="width:100%">
+                                        <thead>
+                                            <tr>
+                                                <th>Name</th>
+                                                <th>Message</th>
+                                                <th>Prompt</th>
+                                                <th>Action</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            <% if (assignments && assignments.length > 0) { %>
+                                                <% assignments.forEach(assignment => { %>
+                                                    <tr>
+                                                        <td><%= assignment.name %></td>
+                                                        <td>
+                                                            <span class="message" data-message="<%= assignment.first_message %>">
+                                                                <%= assignment.first_message.length > 10 ? assignment.first_message.substring(0, 10) + '...' : assignment.first_message %>
+                                                            </span>
+                                                        </td>
+                                                        <td>
+                                                            <span class="message" data-message="<%= assignment.prompt %>">
+                                                                <%= assignment.prompt.length > 10 ? assignment.prompt.substring(0, 10) + '...' : assignment.prompt %>
+                                                            </span>
+                                                        </td>
+                                                        <td>
+                                                            <div class="dropdown d-inline-block">
+                                                                <button class="btn btn-soft-secondary btn-sm dropdown" type="button" data-bs-toggle="dropdown" aria-expanded="false">
+                                                                    <i class="ri-more-fill align-middle"></i>
+                                                                </button>
+                                                                <ul class="dropdown-menu dropdown-menu-end">
+                                                                    <!-- <li><a href="#!" class="dropdown-item"><i class="ri-eye-fill align-bottom me-2 text-muted"></i> View</a></li> -->
+                                                                    <li>
+                                                                        <a class="dropdown-item edit-item-btn"        
+                                                                            data-name="<%= assignment.name %>"
+                                                                            data-first-message="<%= assignment.first_message %>"
+                                                                            data-prompt="<%= assignment.prompt %>"
+                                                                            data-id="<%= assignment.id %>"
+                                                                        >
+                                                                           <i class="ri-pencil-fill align-bottom me-2 text-muted"></i> Edit
+                                                                        </a>
+                                                                    </li>
+                                                                    <li>
+                                                                        <a class="dropdown-item remove-item-btn delete-button" data-id="<%= assignment.id %>">
+                                                                            <i class="ri-delete-bin-fill align-bottom me-2 text-muted" ></i> Delete
+                                                                        </a>
+                                                                    </li>
+                                                                </ul>
+                                                            </div>
+                                                        </td>
+                                                    </tr>
+                                                <% }); %>
+                                            <% } %>    
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <!-- container-fluid -->
+            </div>
+            <!-- End Page-content -->
+
+            <%- include('layout/footer') %>
+        </div>
+        <!-- end main content-->
+
+    </div>
+    <!-- END layout-wrapper -->
+    <div id="fullMessageContainer" class="full-message"></div>
+    <!-- add modal start -->
+    <div class="modal fade" id="addModal" tabindex="-1" aria-labelledby="exampleModalgridLabel">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title fw-bold" id="exampleModalgridLabel">Add Modals</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <form id="assignmentForm">
+                        <div class="row g-3">
+                            <div class="col-xxl-6">
+                                <div>
+                                    <label for="assignmentName" class="form-label">Assignment Name</label>
+                                    <input type="text" class="form-control" id="assignmentName" placeholder="Enter Assignment Name">
+                                </div>
+                            </div>
+                            <!--end col-->
+                            <div class="col-xxl-6">
+                                <div>
+                                    <div>
+                                        <label class="form-label" for="firstMessage">First Message</label>
+                                        <textarea class="form-control" placeholder="Enter First Message" id="firstMessage" rows="3"></textarea>
+                                    </div>
+                                </div>
+                            </div>
+                            <!--end col-->
+                            <div class="col-xxl-6">
+                                <div>
+                                    <div>
+                                        <label class="form-label" for="prompt">System Prompt</label>
+                                        <textarea class="form-control" placeholder="Enter System Prompt" id="prompt" rows="10"></textarea>
+                                    </div>
+                                </div>
+                            </div>
+                            <!--end col-->
+
+                            <div class="col-lg-12">
+                                <div class="hstack gap-2 justify-content-end">
+                                    <button type="button" class="btn btn-light" data-bs-dismiss="modal">Close</button>
+                                    <button type="submit" class="btn btn-primary">Submit</button>
+                                </div>
+                            </div>
+                            <!--end col-->
+                        </div>
+                        <!--end row-->
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+    <!-- modal end -->
+
+    <!-- edit modal start -->
+    <div class="modal fade" id="editModal" tabindex="-1" aria-labelledby="exampleModalgridLabel">
+            <div class="modal-dialog">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title fw-bold" id="exampleModalgridLabel">Add Modals</h5>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                    </div>
+                    <div class="modal-body">
+                        <form id="editAssignmentForm">
+                            <input type="hidden" class="form-control" id="editAssignmentId">
+                            <div class="row g-3">
+                                <div class="col-xxl-6">
+                                    <div>
+                                        <label for="editAssignmentName" class="form-label">Assignment Name</label>
+                                        <input type="text" class="form-control" id="editAssignmentName" placeholder="Enter Assignment Name">
+                                    </div>
+                                </div>
+                                <!--end col-->
+                                <div class="col-xxl-6">
+                                    <div>
+                                        <div>
+                                            <label class="form-label" for="editFirstMessage">First Message</label>
+                                            <textarea class="form-control" placeholder="Enter First Message" id="editFirstMessage" rows="3"></textarea>
+                                        </div>
+                                    </div>
+                                </div>
+                                <!--end col-->
+                                <div class="col-xxl-6">
+                                    <div>
+                                        <div>
+                                            <label class="form-label" for="editPrompt">System Prompt</label>
+                                            <textarea class="form-control" placeholder="Enter System Prompt" id="editPrompt" rows="10"></textarea>
+                                        </div>
+                                    </div>
+                                </div>
+                                <!--end col-->
+    
+                                <div class="col-lg-12">
+                                    <div class="hstack gap-2 justify-content-end">
+                                        <button type="button" class="btn btn-light" data-bs-dismiss="modal">Close</button>
+                                        <button type="submit" class="btn btn-primary">Submit</button>
+                                    </div>
+                                </div>
+                                <!--end col-->
+                            </div>
+                            <!--end row-->
+                        </form>
+                    </div>
+                </div>
+            </div>
+    </div>
+    <!-- modal end -->
+
+    <!-- JAVASCRIPT -->
+    <%- include('layout/script') %>
+
+    <script>
+        $(document).ready(function() {
+            var token = "<%= user.token %>";
+            
+            $('#assignmentForm').on('submit', function(event) {
+                event.preventDefault(); // Prevent the form from submitting the traditional way
+
+                // Get form data
+                var name = $('#assignmentName').val();
+                var message = $('#firstMessage').val();
+                var prompt = $('#prompt').val();
+
+                // Send data to the server using AJAX
+                $.ajax({
+                    url: '/create-assignment', // Replace with your actual controller route
+                    method: 'POST',
+                    headers: {
+                        'Authorization': 'Bearer ' + token
+                    },
+                    data: {
+                        name: name,
+                        message: message,
+                        prompt: prompt
+                    },
+                    success: function(response) {
+                        // Handle success (e.g., show a success message, close modal, etc.)
+                        $('#addModal').modal('hide');
+                        alert('Form submitted successfully!');
+                    },
+                    error: function(error) {
+                        // Handle error (e.g., show an error message)
+                        alert('An error occurred. Please try again.');
+                    }
+                });
+            });
+
+            $('.message').on('click', function (event) {
+                event.stopPropagation(); // Prevent event bubbling to the document
+                const message = $(this).data('message');
+                const $fullMessageContainer = $('#fullMessageContainer');
+
+                // Split message into chunks of 10 characters each
+                const chunks = message.match(/.{1,20}/g);
+
+                // Create a list element for each chunk
+                const $ul = $('<ul>');
+                chunks.forEach(chunk => {
+                    $ul.append($('<li>').text(chunk));
+                });
+
+                $fullMessageContainer.empty().append($ul).show();
+                const offset = $(this).offset();
+                $fullMessageContainer.css({
+                    top: offset.top + $(this).outerHeight(),
+                    left: offset.left + $(this).outerWidth(),
+                });
+
+                $(document).on('click.hideMessage', function (e) {
+                    if (!$(e.target).closest('.full-message').length && !$(e.target).is('.message')) {
+                        $fullMessageContainer.hide();
+                        $(document).off('click.hideMessage'); // Remove the event handler
+                    }
+                });
+            });
+
+            $('.edit-item-btn').on('click', function() {
+                console.log("clickded");
+                var assignment = {
+                    id: $(this).data('id'),
+                    name: $(this).data('name'),
+                    first_message: $(this).data('first-message'),
+                    prompt: $(this).data('prompt')
+                };
+
+                // Populate input fields in the edit modal form with the retrieved data
+                $('#editAssignmentId').val(assignment.id);
+                $('#editAssignmentName').val(assignment.name);
+                $('#editFirstMessage').val(assignment.first_message);
+                $('#editPrompt').val(assignment.prompt);
+
+                // Show the edit modal
+                $('#editModal').modal('show');
+            });
+
+            $('#editAssignmentForm').on('submit', function(event) {
+                event.preventDefault(); // Prevent the form from submitting the traditional way
+
+                // Get form data
+                var name = $('#editAssignmentName').val();
+                var message = $('#editFirstMessage').val();
+                var prompt = $('#editPrompt').val();
+                var id = $('#editAssignmentId').val();
+
+                // Send data to the server using AJAX
+                $.ajax({
+                    url: '/update-assignment', // Replace with your actual controller route
+                    method: 'POST',
+                    headers: {
+                        'Authorization': 'Bearer ' + token
+                    },
+                    data: {
+                        name: name,
+                        message: message,
+                        prompt: prompt,
+                        id: id
+                    },
+                    success: function(response) {
+                        // Handle success (e.g., show a success message, close modal, etc.)
+                        $('#editModal').modal('hide');
+                        alert('Form submitted successfully!');
+                    },
+                    error: function(error) {
+                        // Handle error (e.g., show an error message)
+                        alert('An error occurred. Please try again.');
+                    }
+                });
+            });
+
+            $('.delete-button').on('click', function(event) {
+                event.preventDefault();
+                const id = $(this).data('id');
+                console.log(id);
+                $.ajax({
+                    url: '/delete-assignment', // Replace with your actual controller route
+                    method: 'POST',
+                    headers: {
+                        'Authorization': 'Bearer ' + token
+                    },
+                    data: {
+                        id: id
+                    },
+                    success: function(response) {
+                        // Handle success (e.g., show a success message, close modal, etc.)
+                        window.location.href = '/assignment';
+                    },
+                    error: function(error) {
+                        // Handle error (e.g., show an error message)
+                        alert('An error occurred. Please try again.');
+                    }
+                });
+            });
+
+        });
+    </script>
+
+</body>
+
+</html>

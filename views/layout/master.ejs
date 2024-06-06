@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html lang="en" data-layout="twocolumn" data-sidebar="light" data-sidebar-size="lg" data-sidebar-image="none" data-preloader="disable">
+
+<head>
+    <%- include('head') %>
+</head>
+
+<body>
+
+    <!-- Begin page -->
+    <div id="layout-wrapper">
+
+        <%- include('header') %>
+
+        <!-- Vertical Overlay-->
+        <div class="vertical-overlay"></div>
+
+        <!-- Start right Content here -->
+        <div class="main-content">
+            <%- content %>
+            <!-- End Page-content -->
+            <%- include('footer') %>
+        </div>
+        <!-- end main content-->
+
+    </div>
+    <!-- END layout-wrapper -->
+
+    <!--preloader-->
+    <!-- <div id="preloader">
+        <div id="status">
+            <div class="spinner-border text-primary avatar-sm" role="status">
+                <span class="visually-hidden">Loading...</span>
+            </div>
+        </div>
+    </div> -->
+    <%- include('script') %>
+    <%- additionalScript %>
+
+</body>
+</html>

@@ -1,0 +1,322 @@
+<% function formatDate(date) {
+    const d = new Date(date);
+    const day = String(d.getDate()).padStart(2, '0');
+    const month = String(d.getMonth() + 1).padStart(2, '0'); // Months are zero-indexed
+    const year = d.getFullYear();
+    return `${day}-${month}-${year}`;
+} %>
+
+<!doctype html>
+<html lang="en" data-layout="twocolumn" data-sidebar="light" data-sidebar-size="lg" data-sidebar-image="none" data-preloader="disable">
+
+<head>
+    <%- include('layout/head',{
+        title: 'AGENT LIST'}) %>
+</head>
+
+<body>
+
+    <!-- Begin page -->
+    <div id="layout-wrapper">
+
+        <%- include('layout/header') %>
+        <!-- Vertical Overlay-->
+        <div class="vertical-overlay"></div>
+
+        <!-- ============================================================== -->
+        <!-- Start right Content here -->
+        <!-- ============================================================== -->
+        <div class="main-content">
+
+            <div class="page-content">
+                <div class="container-fluid">
+
+                    <div class="row">
+                        <div class="col-lg-12">
+                            <div class="card">
+                                <div class="card-header">
+                                    <div class="d-flex align-items-center">
+                                        <h5 class="card-title flex-grow-1 mb-0">Assistant List</h5>
+                                        <div class="flex-shrink-0">
+                                            <a href="#" class="btn btn-success btn-sm" data-bs-toggle="modal" data-bs-target="#addModal"><i class="ri-download-2-fill align-middle me-1"></i> New </a>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="card-body">
+                                    <table id="scroll-horizontal" class="table nowrap align-middle" style="width:100%">
+                                        <thead>
+                                            <tr>
+                                                <th>Name</th>
+                                                <th>Provider</th>
+                                                <th>Voice</th>
+                                                <th>Status</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            <% if (assistants && assistants.length > 0) { %>
+                                                <% assistants.forEach(assistant => { %>
+                                                    <tr>
+                                                        <td><a href="/agent-details/<%= assistant.id %>" class="fw-semibold text-uppercase assistant-name <%= assistant.status === 1 ? 'text-success' : 'text-black' %>" data-id="<%= assistant.id %>"> 
+                                                               <%= assistant.name %>
+                                                            </a>
+                                                        </td>
+                                                        <td><%= assistant.provider %></td>
+                                                        <td><%= assistant.voice %></td>
+                                                        <td> 
+                                                            <div class="form-check form-switch form-switch-custom form-switch-success pl-2">
+                                                                <!-- <input class="form-check-input" type="checkbox" role="switch" id="SwitchCheck11" <%= assistant.status === 1 ? 'checked' : '' %>> -->
+                                                                <input class="form-check-input assistant-switch" type="checkbox" role="switch" data-id="<%= assistant.id %>" <%= assistant.status === 1 ? 'checked' : '' %>>
+                                                            </div>
+                                                        </td>
+                                                    </tr>
+                                                <% }); %>
+                                            <% } %>    
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <!-- container-fluid -->
+            </div>
+            <!-- End Page-content -->
+
+            <%- include('layout/footer') %>
+        </div>
+        <!-- end main content-->
+
+    </div>
+    <!-- END layout-wrapper -->
+
+    <!-- add modal start -->
+    <div class="modal fade" id="addModal" tabindex="-1" aria-labelledby="exampleModalgridLabel">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title fw-bold" id="exampleModalgridLabel">Grid Modals</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <form id="agentForm">
+                        <div class="row g-3">
+                            <div class="col-xxl-6">
+                                <div>
+                                    <label for="agentName" class="form-label">Agent Name</label>
+                                    <input type="text" class="form-control" id="agentName" placeholder="Enter Agent Name">
+                                </div>
+                            </div>
+                            <!--end col-->
+                            <div class="col-xxl-6">
+                                <div>
+                                    <div >
+                                        <label for="provider" class="form-label">Voice Provider</label>
+                                        <select class="form-control" data-choices name="provider" id="provider" required>
+                                            <option value="">Select Provider</option>
+                                            <option value="playht" disabled>PlayHt</option>
+                                            <option value="deepgram">Deepgram</option>
+                                            <option value="openai" disabled>Open AI</option>
+                                        </select>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="col-xxl-6">
+                                <div>
+                                    <div>
+                                        <label for="voice" class="form-label">Voice</label>
+                                        <select class="form-control" data-choices name="voice" id="voice" required>
+                                        </select>
+                                    </div>
+                                </div>
+                            </div>
+                            <!--end col-->
+
+                            <!-- <div class="mt-3 pt-2" id="amountDiv" style="display: none;">
+                                <div class="d-flex mb-2">
+                                    <div class="flex-grow-1">
+                                        <h5 class="mb-0">Amount<span class="text-muted ms-1 fs-13">(per minute)</span></h5>
+                                    </div>
+                                    <div class="flex-shrink-0">
+                                        <h6 class="mb-0" id="amount">$1.08</h6>
+                                    </div>
+                                </div>
+                            </div> -->
+
+                            <div class="col-lg-12">
+                                <div class="hstack gap-2 justify-content-end">
+                                    <button type="button" class="btn btn-light" data-bs-dismiss="modal">Close</button>
+                                    <button type="submit" class="btn btn-primary">Submit</button>
+                                </div>
+                            </div>
+                            <!--end col-->
+                        </div>
+                        <!--end row-->
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+    <!-- modal end -->
+
+    <!-- JAVASCRIPT -->
+    <%- include('layout/script') %>
+
+    <script>
+        $(document).ready(function() {
+            // var voiceSelect = new Choices('#voice', {
+            //     searchEnabled: false,
+            //     itemSelectText: '',
+            // });
+            var token = "<%= user.token %>";
+
+            $('#agentForm').on('submit', function(event) {
+                event.preventDefault(); // Prevent the form from submitting the traditional way
+
+                // Get form data
+                var agentName = $('#agentName').val();
+                var voice = $('#voice').val();
+                var provider = $('#provider').val();
+                // Send data to the server using AJAX
+                $.ajax({
+                    url: '/create-assistant', // Replace with your actual controller route
+                    method: 'POST',
+                    headers: {
+                        'Authorization': 'Bearer ' + token
+                    },
+                    data: {
+                        agentName: agentName,
+                        voice: voice,
+                        provider: provider
+                    },
+                    success: function(response) {
+                        // Handle success (e.g., show a success message, close modal, etc.)
+                        $('#addModal').modal('hide');
+                        alert('Form submitted successfully!');
+                    },
+                    error: function(error) {
+                        // Handle error (e.g., show an error message)
+                        alert('An error occurred. Please try again.');
+                    }
+                });
+            });
+
+            $('.assistant-switch').on('change', function() {
+                const assistantId = $(this).data('id');
+                const isChecked = $(this).is(':checked');
+
+                if (isChecked) {
+                    // Uncheck all other switches
+                    $('.assistant-switch').not(this).prop('checked', false);
+
+                    // Disable all delete buttons
+                    $('.delete-button').prop('disabled', false);
+
+                    // Enable delete button for this row
+                    $(`.delete-button[data-id="${assistantId}"]`).prop('disabled', true);
+
+                    // Change all names to text-black
+                    $('.assistant-name').removeClass('text-success').addClass('text-black');
+
+                    // Change the name color for this row to text-success
+                    $(`.assistant-name[data-id="${assistantId}"]`).removeClass('text-black').addClass('text-success');
+                } else {
+                    // Enable delete button for this row
+                    $(`.delete-button[data-id="${assistantId}"]`).prop('disabled', false);
+
+                    // Change the name color for this row to text-black
+                    $(`.assistant-name[data-id="${assistantId}"]`).removeClass('text-success').addClass('text-black');
+                }
+
+                console.log(`Assistant ID: ${assistantId}, New Status: ${isChecked ? 1 : 0}`);
+                
+                // You can add an AJAX call here to update the status in the database
+
+                // Update the status via AJAX
+                $.ajax({
+                    url: '/assistant-status',
+                    method: 'POST',
+                    headers: {
+                        'Authorization': 'Bearer ' + token
+                    },
+                    data: {
+                        assistantId: assistantId,
+                        status: isChecked ? 1 : 0
+                    },
+                    success: function(response) {
+                        // Handle success response if needed
+                        console.log('Status updated successfully.');
+                    },
+                    error: function(xhr, status, error) {
+                        // Handle error response if needed
+                        console.error('Error updating status:', error);
+                    }
+                });
+            });
+
+            $('#provider').change(function() {
+                var provider = $(this).val();
+                
+                // Clear the voice dropdown
+                // $('#voice').empty();
+                voiceSelect.clearStore();
+                
+                if (provider) {
+                    console.log(provider);
+                    // Mock AJAX request URL (replace with your actual URL)
+                    
+                    $.ajax({
+                        url: '/rates',
+                        method: 'POST',
+                        headers: {
+                            'Authorization': 'Bearer ' + token
+                        },
+                        data: {
+                            provider: provider
+                        },
+                        success: function(data) {
+                            // Assuming data is an array of voice objects like: [{id: 'voice1', name: 'Voice 1'}, {id: 'voice2', name: 'Voice 2'}]
+                            console.log(data.array);
+                            $('#amountDiv').show();
+                            $('#amount').text('$' + data.array[0].amount.toFixed(2));
+                            // // Append a default option
+                            // $('#voice').append('<option value="">Select Voice</option>');
+                            
+                            // // // Append fetched voices to the voice dropdown
+                            // data.array.forEach(function(voice) {
+                            //   $('#voice').append('<option value="' + voice.voice + '">' + voice.voice + '</option>');
+                            // });
+                            // Append a default option
+                            voiceSelect.setChoices([{
+                                value: '',
+                                label: 'Select Voice',
+                                selected: true,
+                                disabled: true
+                            }], 'value', 'label', false);
+
+                            // Append fetched voices to the voice dropdown
+                            var choices = data.array.map(function(voice) {
+                                return {
+                                    value: voice.voice,
+                                    label: voice.voice
+                                };
+                            });
+
+                            voiceSelect.setChoices(choices, 'value', 'label', true);
+                        },
+                        error: function() {
+                            $('#amountDiv').hide();
+                            alert('Error fetching voices for the selected provider.');
+                        }
+                    });
+                } else {
+                    // Append a default option if no provider is selected
+                    $('#voice').append('<option value="">Select Voice</option>');
+                }
+            });
+        });
+    </script>
+
+</body>
+
+</html>

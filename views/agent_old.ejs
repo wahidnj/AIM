@@ -1,0 +1,438 @@
+<% function formatDate(date) {
+    const d = new Date(date);
+    const day = String(d.getDate()).padStart(2, '0');
+    const month = String(d.getMonth() + 1).padStart(2, '0'); // Months are zero-indexed
+    const year = d.getFullYear();
+    return `${day}-${month}-${year}`;
+} %>
+
+<!doctype html>
+<html lang="en" data-layout="twocolumn" data-sidebar="light" data-sidebar-size="lg" data-sidebar-image="none" data-preloader="disable">
+
+<head>
+    <%- include('layout/head',{
+        title: 'AGENT LIST'}) %>
+</head>
+
+<body>
+
+    <!-- Begin page -->
+    <div id="layout-wrapper">
+
+        <%- include('layout/header') %>
+        <!-- Vertical Overlay-->
+        <div class="vertical-overlay"></div>
+
+        <!-- ============================================================== -->
+        <!-- Start right Content here -->
+        <!-- ============================================================== -->
+        <div class="main-content">
+
+            <div class="page-content">
+                <div class="container-fluid">
+
+                    <!-- start page title -->
+                    <div class="row">
+                        <div class="col-12">
+                            <div class="page-title-box d-sm-flex align-items-center justify-content-between">
+                                <h4 class="mb-sm-0">Datatables</h4>
+
+                                <div class="page-title-right">
+                                    <ol class="breadcrumb m-0">
+                                        <li class="breadcrumb-item"><a href="javascript: void(0);">Tables</a></li>
+                                        <li class="breadcrumb-item active">Datatables</li>
+                                    </ol>
+                                </div>
+
+                            </div>
+                        </div>
+                    </div>
+                    <!-- end page title -->
+
+                    <div class="row">
+                        <div class="col-lg-12">
+                            <div class="card">
+                                <div class="card-header">
+                                    <div class="d-flex align-items-center">
+                                        <h5 class="card-title flex-grow-1 mb-0">Assistant List</h5>
+                                        <div class="flex-shrink-0">
+                                            <a href="#" class="btn btn-success btn-sm" data-bs-toggle="modal" data-bs-target="#addModal"><i class="ri-download-2-fill align-middle me-1"></i> New </a>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="card-body">
+                                    <table id="scroll-horizontal" class="table nowrap align-middle" style="width:100%">
+                                        <thead>
+                                            <tr>
+                                                <th>Name</th>
+                                                <th>Voice</th>
+                                                <th>Status</th>
+                                                <th>Action</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            <% if (assistants && assistants.length > 0) { %>
+                                                <% assistants.forEach(assistant => { %>
+                                                    <tr>
+                                                        <td><a href="#" class="fw-semibold text-success text-uppercase"><%= assistant.name %></a></td>
+                                                        <td><%= assistant.voice %></td>
+                                                        <td> 
+                                                            <% if (assistant.status === 1) { %>
+                                                                <div class="form-check form-switch form-switch-custom form-switch-success pl-2">
+                                                                    <input class="form-check-input" type="checkbox" role="switch" id="SwitchCheck11" checked>
+                                                                    <!-- <label class="form-check-label" for="SwitchCheck11"></label> -->
+                                                                </div>
+                                                            <% }else { %>
+                                                                <div class="form-check form-switch form-switch-success">
+                                                                    <input class="form-check-input" type="checkbox" role="switch" id="SwitchCheck3">
+                                                                </div>
+                                                            <% } %>
+                                                        </td>
+                                                        <td>
+                                                            <button type="button" class="badge btn-sm bg-danger">Delete</button>
+                                                        </td>
+
+                                                        <!-- <td>
+                                                            <div class="dropdown d-inline-block">
+                                                                <button class="btn btn-soft-secondary btn-sm dropdown" type="button" data-bs-toggle="dropdown" aria-expanded="false">
+                                                                    <i class="ri-more-fill align-middle"></i>
+                                                                </button>
+                                                                <ul class="dropdown-menu dropdown-menu-end">
+                                                                    <li><a href="#!" class="dropdown-item status-item-btn"
+                                                                            data-id="<%= assistant.id %>"
+                                                                            data-status="<%= assistant.status %>">
+                                                                            <i class="ri-eye-fill align-bottom me-2 text-muted"></i> 
+                                                                            <% if (assistant.status === 1) { %>
+                                                                                Deactive Status
+                                                                             <% }else { %>
+                                                                                Active Status
+                                                                             <% } %>
+                                                                        </a>
+                                                                    </li>
+                                                                    <li><a href="#!" class="dropdown-item assign-item-btn"
+                                                                           data-id="<%= assistant.id %>"
+                                                                           data-assignment="<%= assistant.assignment %>">
+                                                                           <i class="ri-eye-fill align-bottom me-2 text-muted"></i> Assign Assignment
+                                                                        </a>
+                                                                    </li>
+                                                                    <li><a class="dropdown-item edit-item-btn" 
+                                                                           data-name="<%= assistant.name %>"
+                                                                           data-voice="<%= assistant.voice %>"
+                                                                           data-id="<%= assistant.id %>">
+                                                                           <i class="ri-pencil-fill align-bottom me-2 text-muted"></i> Edit
+                                                                        </a>
+                                                                    </li>
+                                                                    <li>
+                                                                        <a class="dropdown-item remove-item-btn">
+                                                                            <i class="ri-delete-bin-fill align-bottom me-2 text-muted"></i> Delete
+                                                                        </a>
+                                                                    </li>
+                                                                </ul>
+                                                            </div>
+                                                        </td> -->
+                                                    </tr>
+                                                <% }); %>
+                                            <% } %>    
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <!-- container-fluid -->
+            </div>
+            <!-- End Page-content -->
+
+            <%- include('layout/footer') %>
+        </div>
+        <!-- end main content-->
+
+    </div>
+    <!-- END layout-wrapper -->
+
+    <!-- add modal start -->
+    <div class="modal fade" id="addModal" tabindex="-1" aria-labelledby="exampleModalgridLabel">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title fw-bold" id="exampleModalgridLabel">Grid Modals</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <form id="agentForm">
+                        <div class="row g-3">
+                            <div class="col-xxl-6">
+                                <div>
+                                    <label for="agentName" class="form-label">Agent Name</label>
+                                    <input type="text" class="form-control" id="agentName" placeholder="Enter Agent Name">
+                                </div>
+                            </div>
+                            <!--end col-->
+                            <div class="col-xxl-6">
+                                <div>
+                                    <div class="mb-3">
+                                        <label for="voice" class="form-label">Voice</label>
+                                        <select class="form-control" data-choices name="voice" id="voice" required>
+                                            <option value="">Select Voice</option>
+                                            <option value="sarah">Sarah</option>
+                                            <option value="luna">Luna</option>
+                                            <option value="jennifer">Jennifer</option>
+                                            <option value="alex">Alex</option>
+                                            <option value="bruce">Bruce</option>
+                                            <option value="jordan">Jordan</option>
+                                        </select>
+                                    </div>
+                                </div>
+                            </div>
+                            <!--end col-->
+
+                            <div class="col-lg-12">
+                                <div class="hstack gap-2 justify-content-end">
+                                    <button type="button" class="btn btn-light" data-bs-dismiss="modal">Close</button>
+                                    <button type="submit" class="btn btn-primary">Submit</button>
+                                </div>
+                            </div>
+                            <!--end col-->
+                        </div>
+                        <!--end row-->
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+    <!-- modal end -->
+
+    <!-- add modal start -->
+    <div class="modal fade" id="editModal" tabindex="-1" aria-labelledby="exampleModalgridLabel">
+            <div class="modal-dialog">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title fw-bold" id="exampleModalgridLabel">Grid Modals</h5>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                    </div>
+                    <div class="modal-body">
+                        <form id="editAgentForm">
+                            <input type="hidden" class="form-control" id="editAssistantId">
+                            <div class="row g-3">
+                                <div class="col-xxl-6">
+                                    <div>
+                                        <label for="editAgentName" class="form-label">Agent Name</label>
+                                        <input type="text" class="form-control" id="editAgentName" placeholder="Enter Agent Name">
+                                    </div>
+                                </div>
+                                <!--end col-->
+                                <div class="col-xxl-6">
+                                    <div>
+                                        <div class="mb-3">
+                                            <label for="editVoice" class="form-label">Voice</label>
+                                            <select class="form-control" name="editVoice" id="editVoice" required>
+                                                <option value="">Select Voice</option>
+                                                <option value="sarah">Sarah</option>
+                                                <option value="luna">Luna</option>
+                                                <option value="jennifer">Jennifer</option>
+                                                <option value="alex">Alex</option>
+                                                <option value="bruce">Bruce</option>
+                                                <option value="jordan">Jordan</option>
+                                            </select>
+                                        </div>
+                                    </div>
+                                </div>
+                                <!--end col-->
+    
+                                <div class="col-lg-12">
+                                    <div class="hstack gap-2 justify-content-end">
+                                        <button type="button" class="btn btn-light" data-bs-dismiss="modal">Close</button>
+                                        <button type="submit" class="btn btn-primary">Submit</button>
+                                    </div>
+                                </div>
+                                <!--end col-->
+                            </div>
+                            <!--end row-->
+                        </form>
+                    </div>
+                </div>
+            </div>
+    </div>
+    <!-- modal end -->
+
+    <!-- add modal start -->
+    <div class="modal fade" id="assignModal" tabindex="-1" aria-labelledby="exampleModalgridLabel">
+        <div class="modal-dialog">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title fw-bold" id="exampleModalgridLabel">Grid Modals</h5>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                    </div>
+                    <div class="modal-body">
+                        <form id="assignForm">
+                            <input type="hidden" class="form-control" id="assignId">
+                            <div class="row g-3">
+
+                                <div class="col-xxl-6">
+                                    <div>
+                                        <div class="mb-3">
+                                            <label for="assignAssignment" class="form-label">Voice</label>
+                                            <select class="form-control" name="assignAssignment" id="assignAssignment" required>
+                                                <option value="">Select Assignment</option>
+                                                <% if (assignments && assignments.length > 0) { %>
+                                                    <% assignments.forEach(assignment => { %>
+                                                       <option value="<%= assignment.id %>"><%= assignment.name %></option>
+                                                    <% }); %>
+                                                <% } %>   
+                                                     
+                                            </select>
+                                        </div>
+                                    </div>
+                                </div>
+                                <!--end col-->
+    
+                                <div class="col-lg-12">
+                                    <div class="hstack gap-2 justify-content-end">
+                                        <button type="button" class="btn btn-light" data-bs-dismiss="modal">Close</button>
+                                        <button type="submit" class="btn btn-primary">Submit</button>
+                                    </div>
+                                </div>
+                                <!--end col-->
+                            </div>
+                            <!--end row-->
+                        </form>
+                    </div>
+                </div>
+        </div>
+    </div>
+    <!-- modal end -->
+
+    <!-- JAVASCRIPT -->
+    <%- include('layout/script') %>
+
+    <script>
+        $(document).ready(function() {
+            $('#agentForm').on('submit', function(event) {
+                event.preventDefault(); // Prevent the form from submitting the traditional way
+
+                // Get form data
+                var agentName = $('#agentName').val();
+                var voice = $('#voice').val();
+
+                // Send data to the server using AJAX
+                $.ajax({
+                    url: '/create-assistant', // Replace with your actual controller route
+                    method: 'POST',
+                    data: {
+                        agentName: agentName,
+                        voice: voice
+                    },
+                    success: function(response) {
+                        // Handle success (e.g., show a success message, close modal, etc.)
+                        $('#addModal').modal('hide');
+                        alert('Form submitted successfully!');
+                    },
+                    error: function(error) {
+                        // Handle error (e.g., show an error message)
+                        alert('An error occurred. Please try again.');
+                    }
+                });
+            });
+
+            $('.edit-item-btn').on('click', function() {
+
+                var assistant = {
+                    id: $(this).data('id'),
+                    name: $(this).data('name'),
+                    voice: $(this).data('voice')
+                };
+                console.log(assistant.voice);
+                // $('#editVoice').val(assistant.voice);
+                $('#editAssistantId').val(assistant.id);
+                $('#editAgentName').val(assistant.name);
+                $('#editVoice').val(assistant.voice);
+    
+                // Show the edit modal
+                $('#editModal').modal('show');
+            });
+
+            $('.assign-item-btn').on('click', function() {
+
+                const id = $(this).data('id');
+                const assignment = $(this).data('assignment');
+                console.log(id,assignment);
+                // $('#editVoice').val(assistant.voice);
+                if(assignment != 0){
+                    $('#assignAssignment').val(assignment);
+                }
+                $('#assignId').val(id);
+
+
+                // Show the edit modal
+                $('#assignModal').modal('show');
+            });
+
+            $('#editAgentForm').on('submit', function(event) {
+                event.preventDefault(); // Prevent the form from submitting the traditional way
+
+                // Get form data
+                var name = $('#editAgentName').val();
+                var voice = $('#editVoice').val();
+                var id = $('#editAssistantId').val();
+
+                // Send data to the server using AJAX
+                $.ajax({
+                    url: '/update-agent', // Replace with your actual controller route
+                    method: 'POST',
+                    data: {
+                        name: name,
+                        voice: voice,
+                        id: id
+                    },
+                    success: function(response) {
+                        // Handle success (e.g., show a success message, close modal, etc.)
+                        $('#editModal').modal('hide');
+                        alert('Form submitted successfully!');
+                    },
+                    error: function(error) {
+                        // Handle error (e.g., show an error message)
+                        alert('An error occurred. Please try again.');
+                    }
+                });
+            });
+
+            $('#assignForm').on('submit', function(event) {
+                event.preventDefault(); // Prevent the form from submitting the traditional way
+
+                // Get form data
+                var assignment = $('#assignAssignment').val();
+                var id = $('#assignId').val();
+                console.log(assignment, id);
+
+                if(assignment){
+                    // Send data to the server using AJAX
+                    $.ajax({
+                        url: '/assign-assignment', // Replace with your actual controller route
+                        method: 'POST',
+                        data: {
+                            assignment_id: assignment,
+                            id: id
+                        },
+                        success: function(response) {
+                            // Handle success (e.g., show a success message, close modal, etc.)
+                            $('#assignModal').modal('hide');
+                            alert('Form submitted successfully!');
+                        },
+                        error: function(error) {
+                            // Handle error (e.g., show an error message)
+                            alert('An error occurred. Please try again.');
+                        }
+                    });
+                }else{
+                    alert('Select Assignment Please.');
+                }
+
+
+            });
+        });
+    </script>
+
+</body>
+
+</html>
